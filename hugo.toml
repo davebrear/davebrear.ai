@@ -1,0 +1,18 @@
+baseURL = 'https://davebrear.ai/'
+locale = 'en-us'
+title = 'Dave Brear'
+theme = 'ananke'
+
+[params]
+  description = 'Thinking out loud. LinkedIn for reach, here for depth.'
+  show_reading_time = true
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
+enableGitInfo = true
+
+[outputs]
+  home = ['html', 'rss']
