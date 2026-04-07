@@ -1,18 +1,54 @@
 baseURL = 'https://davebrear.ai/'
 locale = 'en-us'
 title = 'Dave Brear'
-theme = 'ananke'
+theme = 'PaperMod'
+enableGitInfo = true
+paginate = 10
 
 [params]
   description = 'Thinking out loud. LinkedIn for reach, here for depth.'
-  show_reading_time = true
+  ShowReadingTime = true
+  ShowShareButtons = false
+  ShowPostNavLinks = true
+  ShowBreadCrumbs = true
+  ShowCodeCopyButtons = true
+  defaultTheme = 'auto'
+  disableSpecial1stPost = false
+
+  [params.homeInfoParams]
+    Title = 'Dave Brear'
+
+  [[params.socialIcons]]
+    name = 'linkedin'
+    url = 'https://www.linkedin.com/in/davebrear/'
+
+  [[params.socialIcons]]
+    name = 'github'
+    url = 'https://github.com/davebrear'
+
+  [[params.socialIcons]]
+    name = 'rss'
+    url = '/index.xml'
 
 [markup]
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = true
 
-enableGitInfo = true
-
 [outputs]
   home = ['html', 'rss']
+
+[[menus.main]]
+  name = 'Posts'
+  url = '/posts/'
+  weight = 1
+
+[[menus.main]]
+  name = 'About'
+  url = '/about/'
+  weight = 2
+
+[[menus.main]]
+  name = 'Search'
+  url = '/search/'
+  weight = 3
