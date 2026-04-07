@@ -4,6 +4,7 @@ title = 'Dave Brear'
 theme = 'PaperMod'
 enableGitInfo = true
 paginate = 10
+copyright = '© Dave Brear 2026'
 
 [params]
   description = 'Thinking out loud. LinkedIn for reach, here for depth.'
