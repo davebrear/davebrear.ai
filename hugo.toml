@@ -3,7 +3,8 @@ locale = 'en-us'
 title = 'Dave Brear'
 theme = 'PaperMod'
 enableGitInfo = true
-paginate = 10
+[pagination]
+  pagerSize = 10
 copyright = '© Dave Brear 2026'
 
 [params]
