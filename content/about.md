@@ -24,4 +24,4 @@ Most of what you'll find here sits at the intersection of three things I care ab
 
 ## Get in touch
 
-Find me on [LinkedIn](https://www.linkedin.com/in/davebrear/).
+Find me on [LinkedIn](https://www.linkedin.com/in/davebrear/). I'm always happy to talk about AI-augmented knowledge work, and I'm open to guest speaking, podcasts, or panel discussions if the topic fits.
