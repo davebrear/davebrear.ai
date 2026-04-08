@@ -235,20 +235,20 @@ ShowBreadCrumbs: true
     return settings.nodeSize * (1 + Math.min((n.degree || 0) * 0.15, 1.5));
   }
   
-  function getNeighbors(nodeId, depth) {
-    const visited = new Set([nodeId]);
+  function getNeighborsWithDepth(nodeId, maxDepth) {
+    const depthMap = new Map([[nodeId, 0]]);
     let frontier = new Set([nodeId]);
-    for (let i = 0; i < depth; i++) {
+    for (let d = 1; d <= maxDepth; d++) {
       const next = new Set();
       links.forEach(l => {
         const sId = l.source.id || l.source;
         const tId = l.target.id || l.target;
-        if (frontier.has(sId) && !visited.has(tId)) { next.add(tId); visited.add(tId); }
-        if (frontier.has(tId) && !visited.has(sId)) { next.add(sId); visited.add(sId); }
+        if (frontier.has(sId) && !depthMap.has(tId)) { next.add(tId); depthMap.set(tId, d); }
+        if (frontier.has(tId) && !depthMap.has(sId)) { next.add(sId); depthMap.set(sId, d); }
       });
       frontier = next;
     }
-    return visited;
+    return depthMap;
   }
   
   function isDirectNeighbor(nodeId, targetId) {
@@ -268,16 +268,24 @@ ShowBreadCrumbs: true
     const depth = parseInt(document.getElementById('depth-slider').value);
     const typeFilter = document.getElementById('type-filter').value;
     
-    let activeNodes = null;
+    let depthMap = null;
     if (centeredNodeId && depth < 5) {
-      activeNodes = getNeighbors(centeredNodeId, depth);
+      depthMap = getNeighborsWithDepth(centeredNodeId, depth);
     }
     
     function isVisible(n) {
       if (typeFilter !== 'all' && n.type !== typeFilter) return false;
-      if (activeNodes && !activeNodes.has(n.id)) return false;
+      if (depthMap && !depthMap.has(n.id)) return false;
       return true;
     }
+    
+    function nodeDepth(n) {
+      if (!depthMap) return 0;
+      return depthMap.get(n.id) || 0;
+    }
+    
+    const depthLinkColors = ['#64ffda', '#4a9e8e', '#3a6e6e', '#2a4e5e'];
+    function linkColorForDepth(d) { return depthLinkColors[Math.min(d, depthLinkColors.length - 1)]; }
     
     function isHoverLit(n) {
       if (!hoveredNode) return false;
@@ -297,10 +305,12 @@ ShowBreadCrumbs: true
         if (s.id === hoveredNode.id || t.id === hoveredNode.id) {
           alpha = 0.8; lw = settings.linkWidth * 2.5; color = '#64ffda';
         } else { alpha = 0.05; }
-      } else if (centeredNodeId) {
-        if (s.id === centeredNodeId || t.id === centeredNodeId) {
-          alpha = 0.6; color = '#64ffda'; lw = settings.linkWidth * 1.5;
-        }
+      } else if (depthMap) {
+        const sD = nodeDepth(s), tD = nodeDepth(t);
+        const minD = Math.min(sD, tD);
+        color = linkColorForDepth(minD);
+        alpha = minD === 0 ? 0.7 : minD === 1 ? 0.5 : 0.35;
+        lw = minD === 0 ? settings.linkWidth * 2 : minD === 1 ? settings.linkWidth * 1.5 : settings.linkWidth;
       }
       
       ctx.beginPath();
@@ -318,6 +328,10 @@ ShowBreadCrumbs: true
       const r = getNodeRadius(n);
       let alpha = 0.85;
       if (hoveredNode && !isHoverLit(n)) alpha = 0.1;
+      else if (depthMap) {
+        const d = nodeDepth(n);
+        alpha = d === 0 ? 1 : d === 1 ? 0.9 : 0.6;
+      }
       
       ctx.beginPath();
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
