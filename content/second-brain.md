@@ -12,7 +12,7 @@ cover:
   hidden: false
 ---
 
-The above diagram explains how my second brain is structured. Ideas enter through the inbox: a quote, a podcast timestamp, a thought on a walk. They get grounded against source material: books, articles, conversations. Then they become atomic notes: single ideas, written in my own words, linked to each other. The links are where the thinking happens. Over time, clusters of connected atoms assemble into outputs: the articles on this site.
+The above diagram explains how my second brain is structured. The method is based on the Zettelkasten, a system developed by the sociologist Niklas Luhmann and brilliantly explained in Sonke Ahrens' [How to Take Smart Notes](https://smartnotes.teachable.com/p/my-downloadable-166384), the book that changed how I think about note-taking. Ideas enter through the inbox: a quote, a podcast timestamp, a thought on a walk. They get grounded against source material: books, articles, conversations. Then they become atomic notes: single ideas, written in my own words, linked to each other. The links are where the thinking happens. Over time, clusters of connected atoms assemble into outputs: the articles on this site.
 
 The whole network is public. There are two ways to use it.
 
