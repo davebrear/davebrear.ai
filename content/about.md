@@ -8,9 +8,7 @@ ShowPostNavLinks: false
 ShowBreadCrumbs: false
 ---
 
-<div style="text-align:center;margin-bottom:1.5em">
-<img src="/images/headshot.jpg" alt="Dave Brear" style="width:180px;height:180px;border-radius:50%;object-fit:cover;object-position:center 20%">
-</div>
+<img src="/images/headshot.jpg" alt="Dave Brear" style="width:140px;height:140px;border-radius:50%;object-fit:cover;object-position:center 20%;float:left;margin:0 1.5em 1em 0">
 
 I'm a technology strategist at a large software vendor, helping customers get the most out of their investment in our technologies. I'm also unreasonably excited about what AI is doing to knowledge work right now. The kind of excited where you connect an AI to your notes at 9am and look up at 1pm wondering where the morning went.
 
