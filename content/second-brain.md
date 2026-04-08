@@ -52,7 +52,7 @@ This is an evolving vault. I'll update it with new atomic notes and articles as 
 
 **AI-generated knowledge vs AI-augmented thinking.** Karpathy's LLM wiki produces 400,000 words of reference material without writing a word. My vault produces positions I can defend in conversation. Both valid, fundamentally different outcomes. I'm not sure the industry is making this distinction clearly enough yet.
 
-**Subscribable brains as federated collaboration.** Shared vaults flatten two perspectives into one. Subscribable brains keep them discrete. My vault stays mine, yours stays yours, an AI traverses across both. I tested this by subscribing to Brian Madden's MCP alongside my own vault. Two brains, one session, perspectives intact.
+**Subscribable brains as federated collaboration.** Shared vaults flatten two perspectives into one. Subscribable brains keep them discrete. My vault stays mine, yours stays yours, an AI traverses across both. I tested this by subscribing to [Brian Madden's MCP](https://brianmadden.ai) alongside my own vault. Two brains, one session, perspectives intact.
 
 **AI-powered knowledge work is silently gaining traction.** November 2025: models jumped in capability and writable memory turned chatbots into collaborators. A small group of pioneers independently arrived at the same patterns in Q1 2026. The adopters are still tiny but disproportionately influential. When colleagues start asking "how did you produce that?" the tipping point isn't far behind.
 
