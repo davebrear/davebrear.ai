@@ -10,6 +10,8 @@ ShowBreadCrumbs: true
 
 <style>
 .post-content { max-width: none !important; }
+.main { max-width: none !important; }
+.post-single { max-width: none !important; padding: 0 1em !important; }
 #graph-canvas {
   width: 100%;
   height: 85vh;
@@ -339,12 +341,14 @@ ShowBreadCrumbs: true
       nodes.forEach(n => {
         if (!isVisible(n)) return;
         
-        let show = alwaysOn || zoomShow || n === hoveredNode || n.id === centeredNodeId || isHoverLit(n);
+        const isCentered = !!centeredNodeId;
+        let show = alwaysOn || zoomShow || n === hoveredNode || n.id === centeredNodeId || isHoverLit(n) || (isCentered && isVisible(n));
         if (!show) return;
         
         let alpha = 1;
         if (hoveredNode && !isHoverLit(n)) alpha = 0.06;
-        else if (alwaysOn && !hoveredNode && !centeredNodeId) alpha = 0.65;
+        else if (isCentered && !hoveredNode) alpha = 0.85;
+        else if (alwaysOn && !hoveredNode && !isCentered) alpha = 0.65;
         
         const fs = (n === hoveredNode || n.id === centeredNodeId) ? settings.labelSize + 2 : settings.labelSize;
         ctx.font = `${fs}px sans-serif`;
