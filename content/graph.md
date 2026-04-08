@@ -145,7 +145,6 @@ Hover over a node to see its connections. Click to read the note. Use the contro
 </div>
 
 <script src="https://unpkg.com/cytoscape@3.28.1/dist/cytoscape.min.js"></script>
-<script src="https://unpkg.com/cytoscape-fcose@2.2.0/cytoscape-fcose.js"></script>
 <script>
 (async function() {
   const res = await fetch('/graph.json');
@@ -210,16 +209,14 @@ Hover over a node to see its connections. Click to read the note. Use the contro
       }
     ],
     layout: {
-      name: 'fcose',
-      quality: 'proof',
-      idealEdgeLength: 120,
-      nodeRepulsion: 15000,
-      edgeElasticity: 0.1,
-      gravity: 0.4,
-      gravityRange: 1.5,
+      name: 'cose',
+      idealEdgeLength: 140,
+      nodeRepulsion: 20000,
+      nodeOverlap: 30,
+      gravity: 0.15,
+      numIter: 1000,
       animate: false,
-      randomize: true,
-      nodeSeparation: 100
+      randomize: true
     },
     minZoom: 0.2,
     maxZoom: 4
