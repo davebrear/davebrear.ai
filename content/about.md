@@ -8,6 +8,10 @@ ShowPostNavLinks: false
 ShowBreadCrumbs: false
 ---
 
+<div style="text-align:center;margin-bottom:1.5em">
+<img src="/images/headshot.jpg" alt="Dave Brear" style="width:180px;height:180px;border-radius:50%;object-fit:cover;object-position:center 20%">
+</div>
+
 I'm a technology strategist at a large software vendor, helping customers get the most out of their investment in our technologies. I'm also unreasonably excited about what AI is doing to knowledge work right now. The kind of excited where you connect an AI to your notes at 9am and look up at 1pm wondering where the morning went.
 
 This site is a record of that excitement turning into practice: how my understanding has developed, what I've built along the way, and how you can apply these ideas in your own workflows.
