@@ -148,7 +148,7 @@ ShowBreadCrumbs: true
     </div>
     <div class="control-section">
       <h4>Display</h4>
-      <label><span>Labels</span><select id="label-mode" style="width:95px"><option value="hover">On hover</option><option value="always">Always on</option><option value="off">Off</option></select></label>
+      <label><span>Labels</span><select id="label-mode" style="width:95px"><option value="always">Always on</option><option value="hover">On hover</option><option value="off">Off</option></select></label>
       <label><span>Node size</span> <span id="nsize-val">3</span><input type="range" id="node-size" min="1" max="8" value="3"></label>
       <label><span>Link width</span> <span id="lwidth-val">1</span><input type="range" id="link-width" min="0.5" max="4" value="1" step="0.5"></label>
       <label><span>Label size</span> <span id="lsize-val">10</span><input type="range" id="label-size" min="0" max="16" value="10"></label>
@@ -215,7 +215,7 @@ ShowBreadCrumbs: true
   });
   
   let settings = {
-    nodeSize: 3, linkWidth: 1, labelSize: 10, labelFade: 1.2, labelMode: 'hover',
+    nodeSize: 3, linkWidth: 1, labelSize: 10, labelFade: 1.2, labelMode: 'always',
     centerForce: 0.01, repelForce: 200, linkForce: 0.3, linkDist: 80
   };
   
