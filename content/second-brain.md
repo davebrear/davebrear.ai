@@ -6,6 +6,10 @@ ShowReadingTime: false
 ShowShareButtons: false
 ShowPostNavLinks: false
 ShowBreadCrumbs: false
+cover:
+  image: "/images/second-brain-flow.jpg"
+  alt: "Zettelkasten flow: Inbox to Sources to Atomic Notes to Outputs"
+  hidden: false
 ---
 
 Everything I write starts as atomic notes linked together in a Zettelkasten. The articles on this site are the output. The thinking network underneath is also public.
