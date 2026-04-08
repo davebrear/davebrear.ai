@@ -11,7 +11,7 @@ ShowBreadCrumbs: true
 <style>
 #graph-canvas {
   width: 100%;
-  height: 750px;
+  height: 85vh;
   border: 1px solid #333;
   border-radius: 8px;
   margin: 1em 0;
@@ -30,9 +30,24 @@ ShowBreadCrumbs: true
   font-size: 0.8em;
   color: #ccc;
   z-index: 10;
-  width: 220px;
-  max-height: 700px;
+  width: 200px;
+  max-height: 80vh;
   overflow-y: auto;
+}
+#controls-panel.collapsed {
+  width: auto;
+  padding: 8px 12px;
+}
+#controls-panel.collapsed .control-section,
+#controls-panel.collapsed h4:not(#toggle-btn) {
+  display: none;
+}
+#toggle-btn {
+  cursor: pointer;
+  user-select: none;
+  margin: 0;
+  color: #64ffda;
+  font-size: 0.95em;
 }
 #controls-panel h4 {
   margin: 0 0 8px 0;
@@ -108,6 +123,7 @@ ShowBreadCrumbs: true
 
 <div id="graph-canvas">
   <div id="controls-panel">
+    <h4 id="toggle-btn">Controls ▼</h4>
     <div class="control-section">
       <h4>Filters</h4>
       <label>Center on: <span></span></label>
@@ -124,7 +140,8 @@ ShowBreadCrumbs: true
     </div>
     <div class="control-section">
       <h4>Display</h4>
-      <label>Node size <span id="nsize-val">4</span><input type="range" id="node-size" min="1" max="10" value="4"></label>
+      <label>Labels <select id="label-mode" style="width:90px"><option value="hover">On hover</option><option value="always">Always on</option><option value="off">Off</option></select></label>
+      <label>Node size <span id="nsize-val">3</span><input type="range" id="node-size" min="1" max="8" value="3"></label>
       <label>Link width <span id="lwidth-val">1</span><input type="range" id="link-width" min="1" max="5" value="1" step="0.5"></label>
       <label>Label size <span id="lsize-val">10</span><input type="range" id="label-size" min="0" max="16" value="10"></label>
       <label>Label fade <span id="lfade-val">1.2</span><input type="range" id="label-fade" min="0.3" max="3" value="1.2" step="0.1"></label>
@@ -186,7 +203,7 @@ ShowBreadCrumbs: true
   
   // Settings
   let settings = {
-    nodeSize: 4, linkWidth: 1, labelSize: 10, labelFade: 1.2,
+    nodeSize: 3, linkWidth: 1, labelSize: 10, labelFade: 1.2, labelMode: 'hover',
     centerForce: 0.01, repelForce: 200, linkForce: 0.3, linkDist: 80
   };
   
@@ -217,7 +234,7 @@ ShowBreadCrumbs: true
   let visibleNodes = null;
   
   function getNodeRadius(n) {
-    return settings.nodeSize * (1 + (n.degree || 0) * 0.25);
+    return settings.nodeSize * (1 + Math.min((n.degree || 0) * 0.15, 1.5));
   }
   
   function getNeighbors(nodeId, depth) {
@@ -333,19 +350,21 @@ ShowBreadCrumbs: true
     
     // Draw labels
     const labelSize = settings.labelSize * transform.k;
-    if (labelSize > 0) {
+    if (labelSize > 0 && settings.labelMode !== 'off') {
       const fadeThreshold = settings.labelFade;
-      const showAll = transform.k > fadeThreshold;
+      const zoomShowAll = transform.k > fadeThreshold;
+      const alwaysOn = settings.labelMode === 'always';
       
       nodes.forEach(n => {
         if (!isNodeVisible(n)) return;
         
-        let shouldShow = showAll || n === hoveredNode || n.id === centerNodeId || isHoverHighlighted(n);
+        let shouldShow = alwaysOn || zoomShowAll || n === hoveredNode || n.id === centerNodeId || isHoverHighlighted(n);
         if (!shouldShow) return;
         
         let alpha = 1;
         if (hoveredNode && !isHoverHighlighted(n)) alpha = 0.08;
-        if (!showAll && isHoverHighlighted(n) && n !== hoveredNode) alpha = 0.9;
+        else if (alwaysOn && !hoveredNode) alpha = 0.7;
+        if (!zoomShowAll && !alwaysOn && isHoverHighlighted(n) && n !== hoveredNode) alpha = 0.9;
         
         const fontSize = n === hoveredNode || n.id === centerNodeId ? settings.labelSize + 2 : settings.labelSize;
         ctx.font = `${fontSize}px sans-serif`;
@@ -501,6 +520,19 @@ ShowBreadCrumbs: true
   bindSlider('link-dist', 'linkd-val', 'linkDist', v => {
     simulation.force('link').distance(v);
     simulation.alpha(0.3).restart();
+  });
+  
+  // Toggle controls panel
+  document.getElementById('toggle-btn').addEventListener('click', () => {
+    document.getElementById('controls-panel').classList.toggle('collapsed');
+    const btn = document.getElementById('toggle-btn');
+    btn.textContent = btn.textContent.includes('▼') ? 'Controls ▶' : 'Controls ▼';
+  });
+  
+  // Label mode
+  document.getElementById('label-mode').addEventListener('change', function() {
+    settings.labelMode = this.value;
+    draw();
   });
   
   // Center-on and depth
