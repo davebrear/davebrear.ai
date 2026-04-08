@@ -51,6 +51,11 @@ copyright = '© Dave Brear 2026'
   weight = 2
 
 [[menus.main]]
+  name = 'Second Brain'
+  url = '/second-brain/'
+  weight = 3
+
+[[menus.main]]
   name = 'Search'
   url = '/search/'
-  weight = 3
+  weight = 4
