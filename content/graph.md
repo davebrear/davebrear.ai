@@ -9,6 +9,7 @@ ShowBreadCrumbs: true
 ---
 
 <style>
+.post-content { max-width: none !important; }
 #graph-canvas {
   width: 100%;
   height: 85vh;
@@ -30,39 +31,33 @@ ShowBreadCrumbs: true
   font-size: 0.8em;
   color: #ccc;
   z-index: 10;
-  width: 200px;
+  width: 240px;
   max-height: 80vh;
   overflow-y: auto;
 }
-#controls-panel.collapsed {
-  width: auto;
-  padding: 8px 12px;
-}
-#controls-panel.collapsed .control-section,
-#controls-panel.collapsed h4:not(#toggle-btn) {
-  display: none;
-}
+#controls-panel.collapsed .control-section { display: none; }
 #toggle-btn {
   cursor: pointer;
   user-select: none;
-  margin: 0;
+  margin: 0 0 4px 0;
   color: #64ffda;
   font-size: 0.95em;
 }
 #controls-panel h4 {
-  margin: 0 0 8px 0;
+  margin: 0 0 6px 0;
   color: #64ffda;
-  font-size: 0.95em;
-  cursor: pointer;
+  font-size: 0.9em;
 }
 #controls-panel label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin: 6px 0;
+  margin: 5px 0;
+  gap: 6px;
 }
+#controls-panel label span:first-child { white-space: nowrap; min-width: 65px; }
 #controls-panel input[type="range"] {
-  width: 100px;
+  width: 90px;
   accent-color: #64ffda;
 }
 #controls-panel select {
@@ -72,17 +67,23 @@ ShowBreadCrumbs: true
   color: #e0e0e0;
   border: 1px solid #555;
   border-radius: 4px;
-  margin: 4px 0;
+  margin: 3px 0;
 }
+#controls-panel button {
+  width: 100%;
+  padding: 5px;
+  background: #2a2a3e;
+  color: #64ffda;
+  border: 1px solid #555;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 6px;
+}
+#controls-panel button:hover { background: #3a3a5e; }
 .control-section {
   border-top: 1px solid #333;
   padding-top: 8px;
   margin-top: 8px;
-}
-.control-section:first-child {
-  border-top: none;
-  padding-top: 0;
-  margin-top: 0;
 }
 #note-popup {
   display: none;
@@ -90,7 +91,7 @@ ShowBreadCrumbs: true
   top: 10px;
   right: 10px;
   width: 350px;
-  max-height: 500px;
+  max-height: 70vh;
   overflow-y: auto;
   background: rgba(22, 33, 62, 0.97);
   border: 1px solid #555;
@@ -102,13 +103,20 @@ ShowBreadCrumbs: true
   color: #e0e0e0;
 }
 #note-popup h3 { margin-top: 0; color: #64ffda; }
-#note-popup .close-btn { float: right; cursor: pointer; font-size: 1.2em; color: #999; }
-#note-popup .close-btn:hover { color: #fff; }
-#note-popup .note-type { font-size: 0.75em; text-transform: uppercase; color: #888; margin-bottom: 0.5em; }
-#note-popup pre { white-space: pre-wrap; word-wrap: break-word; font-size: 0.85em; background: #0a0a1a; padding: 0.8em; border-radius: 4px; max-height: 300px; overflow-y: auto; }
-.legend {
-  display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.8em; margin-bottom: 0.5em;
+#popup-actions { display: flex; gap: 8px; margin-top: 8px; }
+#popup-actions button {
+  flex: 1; padding: 5px; background: #2a2a3e; color: #64ffda;
+  border: 1px solid #555; border-radius: 4px; cursor: pointer; font-size: 0.85em;
 }
+#popup-actions button:hover { background: #3a3a5e; }
+.close-btn { float: right; cursor: pointer; font-size: 1.2em; color: #999; }
+.close-btn:hover { color: #fff; }
+.note-type { font-size: 0.75em; text-transform: uppercase; color: #888; margin-bottom: 0.5em; }
+#note-popup pre {
+  white-space: pre-wrap; word-wrap: break-word; font-size: 0.85em;
+  background: #0a0a1a; padding: 0.8em; border-radius: 4px; max-height: 250px; overflow-y: auto;
+}
+.legend { display: flex; gap: 1rem; flex-wrap: wrap; font-size: 0.8em; margin-bottom: 0.5em; }
 .legend-item { display: flex; align-items: center; gap: 4px; }
 .legend-dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; }
 </style>
@@ -126,32 +134,30 @@ ShowBreadCrumbs: true
     <h4 id="toggle-btn">Controls ▼</h4>
     <div class="control-section">
       <h4>Filters</h4>
-      <label>Center on: <span></span></label>
-      <select id="center-select"><option value="">-- all --</option></select>
-      <label>Type: <span></span></label>
       <select id="type-filter">
-        <option value="all">All</option>
-        <option value="atom">Atoms</option>
-        <option value="article">Articles</option>
-        <option value="moc">MOCs</option>
-        <option value="source">Sources</option>
+        <option value="all">All types</option>
+        <option value="atom">Atoms only</option>
+        <option value="article">Articles only</option>
+        <option value="moc">MOCs only</option>
+        <option value="source">Sources only</option>
       </select>
-      <label>Depth <span id="depth-val">All</span><input type="range" id="depth-slider" min="1" max="5" value="5"></label>
+      <label><span>Depth</span> <span id="depth-val">All</span><input type="range" id="depth-slider" min="1" max="5" value="5"></label>
+      <button id="reset-btn">Reset view</button>
     </div>
     <div class="control-section">
       <h4>Display</h4>
-      <label>Labels <select id="label-mode" style="width:90px"><option value="hover">On hover</option><option value="always">Always on</option><option value="off">Off</option></select></label>
-      <label>Node size <span id="nsize-val">3</span><input type="range" id="node-size" min="1" max="8" value="3"></label>
-      <label>Link width <span id="lwidth-val">1</span><input type="range" id="link-width" min="1" max="5" value="1" step="0.5"></label>
-      <label>Label size <span id="lsize-val">10</span><input type="range" id="label-size" min="0" max="16" value="10"></label>
-      <label>Label fade <span id="lfade-val">1.2</span><input type="range" id="label-fade" min="0.3" max="3" value="1.2" step="0.1"></label>
+      <label><span>Labels</span><select id="label-mode" style="width:95px"><option value="hover">On hover</option><option value="always">Always on</option><option value="off">Off</option></select></label>
+      <label><span>Node size</span> <span id="nsize-val">3</span><input type="range" id="node-size" min="1" max="8" value="3"></label>
+      <label><span>Link width</span> <span id="lwidth-val">1</span><input type="range" id="link-width" min="0.5" max="4" value="1" step="0.5"></label>
+      <label><span>Label size</span> <span id="lsize-val">10</span><input type="range" id="label-size" min="0" max="16" value="10"></label>
+      <label><span>Label fade</span> <span id="lfade-val">1.2</span><input type="range" id="label-fade" min="0.3" max="3" value="1.2" step="0.1"></label>
     </div>
     <div class="control-section">
       <h4>Forces</h4>
-      <label>Centre <span id="center-val">0.01</span><input type="range" id="center-force" min="0" max="0.05" value="0.01" step="0.005"></label>
-      <label>Repel <span id="repel-val">200</span><input type="range" id="repel-force" min="50" max="600" value="200" step="10"></label>
-      <label>Link force <span id="linkf-val">0.3</span><input type="range" id="link-force" min="0" max="1" value="0.3" step="0.05"></label>
-      <label>Link dist <span id="linkd-val">80</span><input type="range" id="link-dist" min="20" max="200" value="80" step="5"></label>
+      <label><span>Centre</span> <span id="center-val">0.01</span><input type="range" id="center-force" min="0" max="0.05" value="0.01" step="0.005"></label>
+      <label><span>Repel</span> <span id="repel-val">200</span><input type="range" id="repel-force" min="50" max="600" value="200" step="10"></label>
+      <label><span>Link pull</span> <span id="linkf-val">0.3</span><input type="range" id="link-force" min="0" max="1" value="0.3" step="0.05"></label>
+      <label><span>Link dist</span> <span id="linkd-val">80</span><input type="range" id="link-dist" min="20" max="200" value="80" step="5"></label>
     </div>
   </div>
   <div id="note-popup">
@@ -159,6 +165,10 @@ ShowBreadCrumbs: true
     <div class="note-type" id="popup-type"></div>
     <h3 id="popup-title"></h3>
     <pre id="popup-content"></pre>
+    <div id="popup-actions">
+      <button id="popup-center">Center on this note</button>
+      <button id="popup-close">Close</button>
+    </div>
   </div>
   <canvas id="canvas"></canvas>
 </div>
@@ -175,63 +185,49 @@ ShowBreadCrumbs: true
   const canvas = document.getElementById('canvas');
   const ctx = canvas.getContext('2d');
   
-  let width = container.clientWidth;
-  let height = container.clientHeight;
-  canvas.width = width * devicePixelRatio;
-  canvas.height = height * devicePixelRatio;
-  canvas.style.width = width + 'px';
-  canvas.style.height = height + 'px';
-  ctx.scale(devicePixelRatio, devicePixelRatio);
+  let width, height;
+  function resizeCanvas() {
+    width = container.clientWidth;
+    height = container.clientHeight;
+    canvas.width = width * devicePixelRatio;
+    canvas.height = height * devicePixelRatio;
+    canvas.style.width = width + 'px';
+    canvas.style.height = height + 'px';
+    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+  }
+  resizeCanvas();
   
-  // Build nodes and links
   const nodeMap = {};
   const nodes = data.nodes.map(n => {
-    const node = { id: n.id, label: n.id.replace(/-/g, ' '), type: n.type, path: n.path, visible: true };
+    const node = { id: n.id, label: n.id.replace(/-/g, ' '), type: n.type, path: n.path };
     nodeMap[n.id] = node;
     return node;
   });
   const links = data.edges.map(e => ({ source: e.source, target: e.target }));
   
-  // Populate dropdown
-  const select = document.getElementById('center-select');
-  nodes.slice().sort((a,b) => a.label.localeCompare(b.label)).forEach(n => {
-    const opt = document.createElement('option');
-    opt.value = n.id;
-    opt.textContent = n.label;
-    select.appendChild(opt);
+  // Compute degrees
+  nodes.forEach(n => n.degree = 0);
+  data.edges.forEach(e => {
+    if (nodeMap[e.source]) nodeMap[e.source].degree++;
+    if (nodeMap[e.target]) nodeMap[e.target].degree++;
   });
   
-  // Settings
   let settings = {
     nodeSize: 3, linkWidth: 1, labelSize: 10, labelFade: 1.2, labelMode: 'hover',
     centerForce: 0.01, repelForce: 200, linkForce: 0.3, linkDist: 80
   };
   
-  // D3 force simulation
+  let transform = d3.zoomIdentity;
+  let hoveredNode = null;
+  let centeredNodeId = null;
+  
   const simulation = d3.forceSimulation(nodes)
     .force('link', d3.forceLink(links).id(d => d.id).distance(settings.linkDist).strength(settings.linkForce))
     .force('charge', d3.forceManyBody().strength(-settings.repelForce))
     .force('center', d3.forceCenter(width / 2, height / 2).strength(settings.centerForce))
-    .force('collision', d3.forceCollide().radius(d => settings.nodeSize * (1 + d.degree * 0.3) + 2))
+    .force('collision', d3.forceCollide().radius(d => getNodeRadius(d) + 2))
     .alphaDecay(0.01)
     .on('tick', draw);
-  
-  // Compute degrees
-  nodes.forEach(n => n.degree = 0);
-  links.forEach(l => {
-    const s = typeof l.source === 'string' ? nodeMap[l.source] : l.source;
-    const t = typeof l.target === 'string' ? nodeMap[l.target] : l.target;
-    if (s) s.degree = (s.degree || 0) + 1;
-    if (t) t.degree = (t.degree || 0) + 1;
-  });
-  
-  // Transform state
-  let transform = d3.zoomIdentity;
-  
-  // Hover / selection state
-  let hoveredNode = null;
-  let focusedNode = null;
-  let visibleNodes = null;
   
   function getNodeRadius(n) {
     return settings.nodeSize * (1 + Math.min((n.degree || 0) * 0.15, 1.5));
@@ -243,14 +239,22 @@ ShowBreadCrumbs: true
     for (let i = 0; i < depth; i++) {
       const next = new Set();
       links.forEach(l => {
-        const sId = typeof l.source === 'string' ? l.source : l.source.id;
-        const tId = typeof l.target === 'string' ? l.target : l.target.id;
+        const sId = l.source.id || l.source;
+        const tId = l.target.id || l.target;
         if (frontier.has(sId) && !visited.has(tId)) { next.add(tId); visited.add(tId); }
         if (frontier.has(tId) && !visited.has(sId)) { next.add(sId); visited.add(sId); }
       });
       frontier = next;
     }
     return visited;
+  }
+  
+  function isDirectNeighbor(nodeId, targetId) {
+    return links.some(l => {
+      const sId = l.source.id || l.source;
+      const tId = l.target.id || l.target;
+      return (sId === nodeId && tId === targetId) || (tId === nodeId && sId === targetId);
+    });
   }
   
   function draw() {
@@ -260,57 +264,41 @@ ShowBreadCrumbs: true
     ctx.scale(transform.k, transform.k);
     
     const depth = parseInt(document.getElementById('depth-slider').value);
-    const centerNodeId = select.value;
     const typeFilter = document.getElementById('type-filter').value;
     
-    // Determine visible nodes
-    let activeNodes;
-    if (centerNodeId && depth < 5) {
-      activeNodes = getNeighbors(centerNodeId, depth);
-    } else {
-      activeNodes = null; // all visible
+    let activeNodes = null;
+    if (centeredNodeId && depth < 5) {
+      activeNodes = getNeighbors(centeredNodeId, depth);
     }
     
-    function isNodeVisible(n) {
+    function isVisible(n) {
       if (typeFilter !== 'all' && n.type !== typeFilter) return false;
       if (activeNodes && !activeNodes.has(n.id)) return false;
       return true;
     }
     
-    function isHoverHighlighted(n) {
+    function isHoverLit(n) {
       if (!hoveredNode) return false;
-      if (n.id === hoveredNode.id) return true;
-      return links.some(l => {
-        const sId = typeof l.source === 'string' ? l.source : l.source.id;
-        const tId = typeof l.target === 'string' ? l.target : l.target.id;
-        return (sId === hoveredNode.id && tId === n.id) || (tId === hoveredNode.id && sId === n.id);
-      });
+      return n.id === hoveredNode.id || isDirectNeighbor(hoveredNode.id, n.id);
     }
     
-    // Draw links
+    // Links
     links.forEach(l => {
-      const s = typeof l.source === 'string' ? nodeMap[l.source] : l.source;
-      const t = typeof l.target === 'string' ? nodeMap[l.target] : l.target;
-      if (!s || !t) return;
-      if (!isNodeVisible(s) || !isNodeVisible(t)) return;
+      const s = l.source, t = l.target;
+      if (!isVisible(s) || !isVisible(t)) return;
       
-      let alpha = 0.15;
+      let alpha = 0.25;
       let lw = settings.linkWidth;
-      let color = '#334';
+      let color = '#445';
       
       if (hoveredNode) {
-        const sId = s.id, tId = t.id;
-        if (sId === hoveredNode.id || tId === hoveredNode.id) {
-          alpha = 0.8; lw = settings.linkWidth * 2; color = '#64ffda';
-        } else {
-          alpha = 0.04;
+        if (s.id === hoveredNode.id || t.id === hoveredNode.id) {
+          alpha = 0.8; lw = settings.linkWidth * 2.5; color = '#64ffda';
+        } else { alpha = 0.05; }
+      } else if (centeredNodeId) {
+        if (s.id === centeredNodeId || t.id === centeredNodeId) {
+          alpha = 0.6; color = '#64ffda'; lw = settings.linkWidth * 1.5;
         }
-      }
-      
-      if (centerNodeId && s.id === centerNodeId || t.id === centerNodeId) {
-        alpha = Math.max(alpha, 0.5);
-        color = '#64ffda';
-        lw = Math.max(lw, settings.linkWidth * 1.5);
       }
       
       ctx.beginPath();
@@ -322,16 +310,12 @@ ShowBreadCrumbs: true
       ctx.stroke();
     });
     
-    // Draw nodes
+    // Nodes
     nodes.forEach(n => {
-      if (!isNodeVisible(n)) return;
-      
+      if (!isVisible(n)) return;
       const r = getNodeRadius(n);
       let alpha = 0.85;
-      
-      if (hoveredNode && !isHoverHighlighted(n)) {
-        alpha = 0.1;
-      }
+      if (hoveredNode && !isHoverLit(n)) alpha = 0.1;
       
       ctx.beginPath();
       ctx.arc(n.x, n.y, r, 0, Math.PI * 2);
@@ -339,8 +323,7 @@ ShowBreadCrumbs: true
       ctx.globalAlpha = alpha;
       ctx.fill();
       
-      // Border for center/hovered node
-      if (n.id === centerNodeId || n === hoveredNode) {
+      if (n.id === centeredNodeId || n === hoveredNode) {
         ctx.strokeStyle = '#fff';
         ctx.lineWidth = 2;
         ctx.globalAlpha = 1;
@@ -348,30 +331,27 @@ ShowBreadCrumbs: true
       }
     });
     
-    // Draw labels
-    const labelSize = settings.labelSize * transform.k;
-    if (labelSize > 0 && settings.labelMode !== 'off') {
-      const fadeThreshold = settings.labelFade;
-      const zoomShowAll = transform.k > fadeThreshold;
+    // Labels
+    if (settings.labelMode !== 'off') {
+      const zoomShow = transform.k > settings.labelFade;
       const alwaysOn = settings.labelMode === 'always';
       
       nodes.forEach(n => {
-        if (!isNodeVisible(n)) return;
+        if (!isVisible(n)) return;
         
-        let shouldShow = alwaysOn || zoomShowAll || n === hoveredNode || n.id === centerNodeId || isHoverHighlighted(n);
-        if (!shouldShow) return;
+        let show = alwaysOn || zoomShow || n === hoveredNode || n.id === centeredNodeId || isHoverLit(n);
+        if (!show) return;
         
         let alpha = 1;
-        if (hoveredNode && !isHoverHighlighted(n)) alpha = 0.08;
-        else if (alwaysOn && !hoveredNode) alpha = 0.7;
-        if (!zoomShowAll && !alwaysOn && isHoverHighlighted(n) && n !== hoveredNode) alpha = 0.9;
+        if (hoveredNode && !isHoverLit(n)) alpha = 0.06;
+        else if (alwaysOn && !hoveredNode && !centeredNodeId) alpha = 0.65;
         
-        const fontSize = n === hoveredNode || n.id === centerNodeId ? settings.labelSize + 2 : settings.labelSize;
-        ctx.font = `${fontSize}px sans-serif`;
-        ctx.fillStyle = n === hoveredNode || n.id === centerNodeId ? '#fff' : '#ccc';
+        const fs = (n === hoveredNode || n.id === centeredNodeId) ? settings.labelSize + 2 : settings.labelSize;
+        ctx.font = `${fs}px sans-serif`;
+        ctx.fillStyle = (n === hoveredNode || n.id === centeredNodeId) ? '#fff' : '#bbb';
         ctx.globalAlpha = alpha;
         ctx.textAlign = 'center';
-        ctx.fillText(n.label, n.x, n.y + getNodeRadius(n) + fontSize + 2);
+        ctx.fillText(n.label, n.x, n.y + getNodeRadius(n) + fs + 2);
       });
     }
     
@@ -379,52 +359,38 @@ ShowBreadCrumbs: true
     ctx.globalAlpha = 1;
   }
   
-  // Zoom and pan
-  const zoom = d3.zoom()
-    .scaleExtent([0.1, 6])
-    .on('zoom', (event) => {
-      transform = event.transform;
-      draw();
-    });
+  // Zoom
+  d3.select(canvas).call(d3.zoom().scaleExtent([0.1, 6]).on('zoom', e => { transform = e.transform; draw(); }));
   
-  d3.select(canvas).call(zoom);
-  
-  // Mouse interaction
-  function getNodeAt(mx, my) {
+  // Hit test
+  function nodeAt(mx, my) {
     const x = (mx - transform.x) / transform.k;
     const y = (my - transform.y) / transform.k;
     for (let i = nodes.length - 1; i >= 0; i--) {
       const n = nodes[i];
-      const r = getNodeRadius(n) + 3;
-      if ((n.x - x) ** 2 + (n.y - y) ** 2 < r ** 2) return n;
+      if ((n.x - x) ** 2 + (n.y - y) ** 2 < (getNodeRadius(n) + 4) ** 2) return n;
     }
     return null;
   }
   
-  canvas.addEventListener('mousemove', (e) => {
+  // Hover
+  canvas.addEventListener('mousemove', e => {
     const rect = canvas.getBoundingClientRect();
-    const node = getNodeAt(e.clientX - rect.left, e.clientY - rect.top);
-    if (node !== hoveredNode) {
-      hoveredNode = node;
-      canvas.style.cursor = node ? 'pointer' : 'default';
-      draw();
+    const n = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
+    if (n !== hoveredNode) { hoveredNode = n; canvas.style.cursor = n ? 'pointer' : 'default'; draw(); }
+    if (dragNode) {
+      dragNode.fx = (e.clientX - rect.left - transform.x) / transform.k;
+      dragNode.fy = (e.clientY - rect.top - transform.y) / transform.k;
     }
   });
+  canvas.addEventListener('mouseleave', () => { hoveredNode = null; draw(); });
   
-  canvas.addEventListener('mouseleave', () => {
-    hoveredNode = null;
-    draw();
-  });
-  
-  // Click to show popup
-  canvas.addEventListener('click', async (e) => {
+  // Click: show popup (don't auto-center)
+  canvas.addEventListener('click', async e => {
     const rect = canvas.getBoundingClientRect();
-    const node = getNodeAt(e.clientX - rect.left, e.clientY - rect.top);
+    const node = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
     
-    if (!node) {
-      document.getElementById('note-popup').style.display = 'none';
-      return;
-    }
+    if (!node) { document.getElementById('note-popup').style.display = 'none'; return; }
     
     const popup = document.getElementById('note-popup');
     document.getElementById('popup-title').textContent = node.label;
@@ -432,9 +398,8 @@ ShowBreadCrumbs: true
     document.getElementById('popup-content').textContent = 'Loading...';
     popup.style.display = 'block';
     
-    // Also center on this node
-    select.value = node.id;
-    draw();
+    // Store clicked node for center button
+    popup.dataset.nodeId = node.id;
     
     try {
       const initRes = await fetch('/mcp', {
@@ -443,7 +408,6 @@ ShowBreadCrumbs: true
         body: JSON.stringify({jsonrpc:'2.0',method:'initialize',params:{protocolVersion:'2025-03-26',capabilities:{},clientInfo:{name:'graph',version:'1.0'}},id:1})
       });
       const sessionId = initRes.headers.get('mcp-session-id');
-      
       const noteRes = await fetch('/mcp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json, text/event-stream', 'Mcp-Session-Id': sessionId },
@@ -451,107 +415,92 @@ ShowBreadCrumbs: true
       });
       const noteText = await noteRes.text();
       const noteData = JSON.parse(noteText.split('data: ')[1]);
-      let content = noteData.result.content[0].text;
-      content = content.replace(/^---[\s\S]*?---\n*/, '');
+      let content = noteData.result.content[0].text.replace(/^---[\s\S]*?---\n*/, '');
       document.getElementById('popup-content').textContent = content.trim();
     } catch(err) {
       document.getElementById('popup-content').textContent = 'Could not load note content.';
     }
   });
   
-  // Drag nodes
+  // Popup: center on this note
+  document.getElementById('popup-center').addEventListener('click', () => {
+    const nodeId = document.getElementById('note-popup').dataset.nodeId;
+    if (nodeId) {
+      centeredNodeId = nodeId;
+      document.getElementById('depth-slider').value = 2;
+      document.getElementById('depth-val').textContent = '2';
+      draw();
+    }
+  });
+  
+  // Popup: close
+  document.getElementById('popup-close').addEventListener('click', () => {
+    document.getElementById('note-popup').style.display = 'none';
+  });
+  
+  // Drag
   let dragNode = null;
-  canvas.addEventListener('mousedown', (e) => {
+  canvas.addEventListener('mousedown', e => {
     const rect = canvas.getBoundingClientRect();
-    dragNode = getNodeAt(e.clientX - rect.left, e.clientY - rect.top);
-    if (dragNode) {
-      simulation.alphaTarget(0.3).restart();
-      dragNode.fx = dragNode.x;
-      dragNode.fy = dragNode.y;
-    }
+    dragNode = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
+    if (dragNode) { simulation.alphaTarget(0.3).restart(); dragNode.fx = dragNode.x; dragNode.fy = dragNode.y; }
   });
-  
-  canvas.addEventListener('mousemove', (e) => {
-    if (!dragNode) return;
-    const rect = canvas.getBoundingClientRect();
-    dragNode.fx = (e.clientX - rect.left - transform.x) / transform.k;
-    dragNode.fy = (e.clientY - rect.top - transform.y) / transform.k;
-  });
-  
   canvas.addEventListener('mouseup', () => {
-    if (dragNode) {
-      simulation.alphaTarget(0);
-      dragNode.fx = null;
-      dragNode.fy = null;
-      dragNode = null;
-    }
+    if (dragNode) { simulation.alphaTarget(0); dragNode.fx = null; dragNode.fy = null; dragNode = null; }
   });
   
-  // Control bindings
-  function bindSlider(id, valId, key, updateFn) {
-    const el = document.getElementById(id);
-    const val = document.getElementById(valId);
-    el.addEventListener('input', () => {
-      const v = parseFloat(el.value);
-      val.textContent = v;
+  // Slider bindings
+  function bind(id, valId, key, fn) {
+    document.getElementById(id).addEventListener('input', function() {
+      const v = parseFloat(this.value);
+      document.getElementById(valId).textContent = v;
       settings[key] = v;
-      if (updateFn) updateFn(v);
+      if (fn) fn(v);
       draw();
     });
   }
+  bind('node-size', 'nsize-val', 'nodeSize');
+  bind('link-width', 'lwidth-val', 'linkWidth');
+  bind('label-size', 'lsize-val', 'labelSize');
+  bind('label-fade', 'lfade-val', 'labelFade');
+  bind('center-force', 'center-val', 'centerForce', v => { simulation.force('center').strength(v); simulation.alpha(0.3).restart(); });
+  bind('repel-force', 'repel-val', 'repelForce', v => { simulation.force('charge').strength(-v); simulation.alpha(0.3).restart(); });
+  bind('link-force', 'linkf-val', 'linkForce', v => { simulation.force('link').strength(v); simulation.alpha(0.3).restart(); });
+  bind('link-dist', 'linkd-val', 'linkDist', v => { simulation.force('link').distance(v); simulation.alpha(0.3).restart(); });
   
-  bindSlider('node-size', 'nsize-val', 'nodeSize');
-  bindSlider('link-width', 'lwidth-val', 'linkWidth');
-  bindSlider('label-size', 'lsize-val', 'labelSize');
-  bindSlider('label-fade', 'lfade-val', 'labelFade');
-  
-  bindSlider('center-force', 'center-val', 'centerForce', v => {
-    simulation.force('center').strength(v);
-    simulation.alpha(0.3).restart();
-  });
-  bindSlider('repel-force', 'repel-val', 'repelForce', v => {
-    simulation.force('charge').strength(-v);
-    simulation.alpha(0.3).restart();
-  });
-  bindSlider('link-force', 'linkf-val', 'linkForce', v => {
-    simulation.force('link').strength(v);
-    simulation.alpha(0.3).restart();
-  });
-  bindSlider('link-dist', 'linkd-val', 'linkDist', v => {
-    simulation.force('link').distance(v);
-    simulation.alpha(0.3).restart();
-  });
-  
-  // Toggle controls panel
+  // Toggle panel
   document.getElementById('toggle-btn').addEventListener('click', () => {
-    document.getElementById('controls-panel').classList.toggle('collapsed');
-    const btn = document.getElementById('toggle-btn');
-    btn.textContent = btn.textContent.includes('▼') ? 'Controls ▶' : 'Controls ▼';
+    const panel = document.getElementById('controls-panel');
+    panel.classList.toggle('collapsed');
+    document.getElementById('toggle-btn').textContent = panel.classList.contains('collapsed') ? 'Controls ▶' : 'Controls ▼';
   });
   
   // Label mode
-  document.getElementById('label-mode').addEventListener('change', function() {
-    settings.labelMode = this.value;
-    draw();
-  });
+  document.getElementById('label-mode').addEventListener('change', function() { settings.labelMode = this.value; draw(); });
   
-  // Center-on and depth
-  select.addEventListener('change', () => { simulation.alpha(0.1).restart(); draw(); });
+  // Depth
   document.getElementById('depth-slider').addEventListener('input', function() {
     document.getElementById('depth-val').textContent = this.value == 5 ? 'All' : this.value;
     draw();
   });
+  
+  // Type filter
   document.getElementById('type-filter').addEventListener('change', () => draw());
   
-  // Handle resize
+  // Reset
+  document.getElementById('reset-btn').addEventListener('click', () => {
+    centeredNodeId = null;
+    document.getElementById('depth-slider').value = 5;
+    document.getElementById('depth-val').textContent = 'All';
+    document.getElementById('type-filter').value = 'all';
+    document.getElementById('note-popup').style.display = 'none';
+    draw();
+    simulation.alpha(0.1).restart();
+  });
+  
+  // Resize
   window.addEventListener('resize', () => {
-    width = container.clientWidth;
-    height = container.clientHeight;
-    canvas.width = width * devicePixelRatio;
-    canvas.height = height * devicePixelRatio;
-    canvas.style.width = width + 'px';
-    canvas.style.height = height + 'px';
-    ctx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0);
+    resizeCanvas();
     simulation.force('center', d3.forceCenter(width / 2, height / 2).strength(settings.centerForce));
     simulation.alpha(0.3).restart();
   });
