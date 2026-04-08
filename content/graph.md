@@ -136,13 +136,13 @@ ShowBreadCrumbs: true
     <h4 id="toggle-btn">Controls ▼</h4>
     <div class="control-section">
       <h4>Filters</h4>
-      <select id="type-filter">
-        <option value="all">All types</option>
-        <option value="atom">Atoms only</option>
-        <option value="article">Articles only</option>
-        <option value="moc">MOCs only</option>
-        <option value="source">Sources only</option>
-      </select>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0">
+        <label style="display:flex;align-items:center;gap:3px;margin:0"><input type="checkbox" class="type-cb" value="atom" checked> <span class="legend-dot" style="background:#64ffda;width:8px;height:8px"></span> Atoms</label>
+        <label style="display:flex;align-items:center;gap:3px;margin:0"><input type="checkbox" class="type-cb" value="article" checked> <span class="legend-dot" style="background:#ff6b6b;width:8px;height:8px"></span> Articles</label>
+        <label style="display:flex;align-items:center;gap:3px;margin:0"><input type="checkbox" class="type-cb" value="moc" checked> <span class="legend-dot" style="background:#ffd93d;width:8px;height:8px"></span> MOCs</label>
+        <label style="display:flex;align-items:center;gap:3px;margin:0"><input type="checkbox" class="type-cb" value="source" checked> <span class="legend-dot" style="background:#6bcb77;width:8px;height:8px"></span> Sources</label>
+        <label style="display:flex;align-items:center;gap:3px;margin:0"><input type="checkbox" class="type-cb" value="system" checked> <span class="legend-dot" style="background:#9b59b6;width:8px;height:8px"></span> System</label>
+      </div>
       <label><span>Depth</span> <span id="depth-val">All</span><input type="range" id="depth-slider" min="1" max="5" value="5"></label>
       <button id="reset-btn">Reset view</button>
     </div>
@@ -266,7 +266,7 @@ ShowBreadCrumbs: true
     ctx.scale(transform.k, transform.k);
     
     const depth = parseInt(document.getElementById('depth-slider').value);
-    const typeFilter = document.getElementById('type-filter').value;
+    const activeTypes = new Set([...document.querySelectorAll('.type-cb:checked')].map(cb => cb.value));
     
     let depthMap = null;
     if (centeredNodeId && depth < 5) {
@@ -274,7 +274,10 @@ ShowBreadCrumbs: true
     }
     
     function isVisible(n) {
-      if (typeFilter !== 'all' && n.type !== typeFilter) return false;
+      // Centered node is always visible regardless of type filter
+      if (n.id === centeredNodeId) return true;
+      if (!activeTypes.has(n.type)) return false;
+      // When centered, only show nodes that are in the neighbourhood
       if (depthMap && !depthMap.has(n.id)) return false;
       return true;
     }
@@ -502,15 +505,15 @@ ShowBreadCrumbs: true
     draw();
   });
   
-  // Type filter
-  document.getElementById('type-filter').addEventListener('change', () => draw());
+  // Type filter checkboxes
+  document.querySelectorAll('.type-cb').forEach(cb => cb.addEventListener('change', () => draw()));
   
   // Reset
   document.getElementById('reset-btn').addEventListener('click', () => {
     centeredNodeId = null;
     document.getElementById('depth-slider').value = 5;
     document.getElementById('depth-val').textContent = 'All';
-    document.getElementById('type-filter').value = 'all';
+    document.querySelectorAll('.type-cb').forEach(cb => cb.checked = true);
     document.getElementById('note-popup').style.display = 'none';
     draw();
     simulation.alpha(0.1).restart();
