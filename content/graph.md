@@ -136,6 +136,7 @@ ShowBreadCrumbs: true
     <h4 id="toggle-btn">Controls ▼</h4>
     <div class="control-section">
       <h4>Filters</h4>
+      <div style="display:flex;gap:8px;margin:4px 0 2px 0"><a href="#" id="select-all" style="color:#64ffda;font-size:0.85em">All</a> <a href="#" id="select-none" style="color:#64ffda;font-size:0.85em">None</a></div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0">
         <label style="display:flex;align-items:center;gap:3px;margin:0"><input type="checkbox" class="type-cb" value="atom" checked> <span class="legend-dot" style="background:#64ffda;width:8px;height:8px"></span> Atoms</label>
         <label style="display:flex;align-items:center;gap:3px;margin:0"><input type="checkbox" class="type-cb" value="article" checked> <span class="legend-dot" style="background:#ff6b6b;width:8px;height:8px"></span> Articles</label>
@@ -540,6 +541,8 @@ ShowBreadCrumbs: true
   
   // Type filter checkboxes
   document.querySelectorAll('.type-cb').forEach(cb => cb.addEventListener('change', () => draw()));
+  document.getElementById('select-all').addEventListener('click', e => { e.preventDefault(); document.querySelectorAll('.type-cb').forEach(cb => cb.checked = true); draw(); });
+  document.getElementById('select-none').addEventListener('click', e => { e.preventDefault(); document.querySelectorAll('.type-cb').forEach(cb => cb.checked = false); draw(); });
   
   // Reset
   document.getElementById('reset-btn').addEventListener('click', () => {
