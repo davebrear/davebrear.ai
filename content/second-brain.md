@@ -45,3 +45,5 @@ The [getting-started guide](https://github.com/davebrear/davebrear-ai/blob/main/
 ## What's inside
 
 70 atomic notes, 7 maps of content, 7 published articles, and 13 source references. All cross-linked. The same method I write about is the method that built the vault.
+
+This is an evolving vault. I'll update it with new atomic notes and articles as I create them. The network grows over time.
