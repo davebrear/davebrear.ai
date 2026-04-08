@@ -380,9 +380,6 @@ ShowBreadCrumbs: true
     ctx.globalAlpha = 1;
   }
   
-  // Zoom
-  d3.select(canvas).call(d3.zoom().scaleExtent([0.1, 6]).on('zoom', e => { transform = e.transform; draw(); }));
-  
   // Hit test
   function nodeAt(mx, my) {
     const x = (mx - transform.x) / transform.k;
@@ -394,15 +391,61 @@ ShowBreadCrumbs: true
     return null;
   }
   
+  // Drag behaviour (must be set up before zoom so it takes priority on nodes)
+  let dragNode = null;
+  const drag = d3.drag()
+    .container(canvas)
+    .subject(e => {
+      const n = nodeAt(e.x, e.y);
+      if (n) return { x: transform.applyX(n.x), y: transform.applyY(n.y), node: n };
+      return null;
+    })
+    .on('start', e => {
+      if (!e.subject) return;
+      dragNode = e.subject.node;
+      simulation.alphaTarget(0.3).restart();
+      dragNode.fx = dragNode.x;
+      dragNode.fy = dragNode.y;
+    })
+    .on('drag', e => {
+      if (!dragNode) return;
+      dragNode.fx = transform.invertX(e.x);
+      dragNode.fy = transform.invertY(e.y);
+    })
+    .on('end', e => {
+      if (!dragNode) return;
+      simulation.alphaTarget(0);
+      dragNode.fx = null;
+      dragNode.fy = null;
+      dragNode = null;
+    });
+  
+  // Zoom (pans when not on a node, zooms with scroll)
+  const zoom = d3.zoom()
+    .scaleExtent([0.1, 6])
+    .filter(e => {
+      // Allow scroll zoom always. For pointer events, only pan if not on a node.
+      if (e.type === 'wheel') return true;
+      if (e.type === 'mousedown' || e.type === 'touchstart') {
+        const rect = canvas.getBoundingClientRect();
+        const mx = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const my = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+        return !nodeAt(mx, my);
+      }
+      return true;
+    })
+    .on('zoom', e => { transform = e.transform; draw(); });
+  
+  const sel = d3.select(canvas);
+  sel.call(drag);
+  sel.call(zoom);
+  
   // Hover
   canvas.addEventListener('mousemove', e => {
+    if (dragNode) return; // don't change hover during drag
     const rect = canvas.getBoundingClientRect();
     const n = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
-    if (n !== hoveredNode) { hoveredNode = n; canvas.style.cursor = n ? 'pointer' : 'default'; draw(); }
-    if (dragNode) {
-      dragNode.fx = (e.clientX - rect.left - transform.x) / transform.k;
-      dragNode.fy = (e.clientY - rect.top - transform.y) / transform.k;
-    }
+    if (n !== hoveredNode) { hoveredNode = n; canvas.style.cursor = n ? 'grab' : 'default'; draw(); }
   });
   canvas.addEventListener('mouseleave', () => { hoveredNode = null; draw(); });
   
@@ -459,16 +502,6 @@ ShowBreadCrumbs: true
     document.getElementById('note-popup').style.display = 'none';
   });
   
-  // Drag
-  let dragNode = null;
-  canvas.addEventListener('mousedown', e => {
-    const rect = canvas.getBoundingClientRect();
-    dragNode = nodeAt(e.clientX - rect.left, e.clientY - rect.top);
-    if (dragNode) { simulation.alphaTarget(0.3).restart(); dragNode.fx = dragNode.x; dragNode.fy = dragNode.y; }
-  });
-  canvas.addEventListener('mouseup', () => {
-    if (dragNode) { simulation.alphaTarget(0); dragNode.fx = null; dragNode.fy = null; dragNode = null; }
-  });
   
   // Slider bindings
   function bind(id, valId, key, fn) {
