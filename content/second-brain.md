@@ -12,9 +12,9 @@ cover:
   hidden: false
 ---
 
-Everything I write starts as atomic notes linked together in a Zettelkasten. The articles on this site are the output. The thinking network underneath is also public.
+Ideas enter through the inbox: a quote, a podcast timestamp, a thought on a walk. They get grounded against source material: books, articles, conversations. Then they become atomic notes: single ideas, written in my own words, linked to each other. The links are where the thinking happens. Over time, clusters of connected atoms assemble into outputs: the articles on this site.
 
-There are two ways to use it.
+The whole network is public. There are two ways to use it.
 
 ## Connect your AI
 
