@@ -524,6 +524,28 @@ ShowBreadCrumbs: true
     simulation.force('link').distance(settings.linkDist * v);
     simulation.force('collision').radius(d => (getNodeRadius(d) + 2) * v);
     simulation.alpha(0.5).restart();
+    // Fit visible nodes to screen after simulation settles
+    setTimeout(() => {
+      const depth = parseInt(document.getElementById('depth-slider').value);
+      const activeTypes = new Set([...document.querySelectorAll('.type-cb:checked')].map(cb => cb.value));
+      const depthMap2 = (centeredNodeId && depth < 5) ? getNeighborsWithDepth(centeredNodeId, depth) : null;
+      const visible = nodes.filter(n => {
+        if (n.id === centeredNodeId) return true;
+        if (!activeTypes.has(n.type)) return false;
+        if (depthMap2 && !depthMap2.has(n.id)) return false;
+        return true;
+      });
+      if (visible.length === 0 || visible.length === nodes.length) return;
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      visible.forEach(n => { minX = Math.min(minX, n.x); maxX = Math.max(maxX, n.x); minY = Math.min(minY, n.y); maxY = Math.max(maxY, n.y); });
+      const pad = 60;
+      const dx = maxX - minX + pad * 2, dy = maxY - minY + pad * 2;
+      const scale = Math.min(width / dx, height / dy, 2);
+      const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+      transform = d3.zoomIdentity.translate(width / 2 - cx * scale, height / 2 - cy * scale).scale(scale);
+      d3.select(canvas).call(d3.zoom().transform, transform);
+      draw();
+    }, 800);
   });
   bind('center-force', 'center-val', 'centerForce', v => { simulation.force('center').strength(v); simulation.alpha(0.3).restart(); });
   bind('repel-force', 'repel-val', 'repelForce', v => { simulation.force('charge').strength(-v); simulation.alpha(0.3).restart(); });
