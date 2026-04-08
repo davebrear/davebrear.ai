@@ -154,6 +154,7 @@ ShowBreadCrumbs: true
       <label><span>Link width</span> <span id="lwidth-val">1</span><input type="range" id="link-width" min="0.5" max="4" value="1" step="0.5"></label>
       <label><span>Label size</span> <span id="lsize-val">10</span><input type="range" id="label-size" min="0" max="16" value="10"></label>
       <label><span>Label fade</span> <span id="lfade-val">1.2</span><input type="range" id="label-fade" min="0.3" max="3" value="1.2" step="0.1"></label>
+      <label><span>Spacing</span> <span id="spacing-val">1</span><input type="range" id="spacing" min="0.5" max="4" value="1" step="0.25"></label>
     </div>
     <div class="control-section">
       <h4>Forces</h4>
@@ -216,7 +217,7 @@ ShowBreadCrumbs: true
   });
   
   let settings = {
-    nodeSize: 3, linkWidth: 1, labelSize: 10, labelFade: 1.2, labelMode: 'always',
+    nodeSize: 3, linkWidth: 1, labelSize: 10, labelFade: 1.2, labelMode: 'always', spacing: 1,
     centerForce: 0.01, repelForce: 200, linkForce: 0.3, linkDist: 80
   };
   
@@ -518,6 +519,12 @@ ShowBreadCrumbs: true
   bind('link-width', 'lwidth-val', 'linkWidth');
   bind('label-size', 'lsize-val', 'labelSize');
   bind('label-fade', 'lfade-val', 'labelFade');
+  bind('spacing', 'spacing-val', 'spacing', v => {
+    simulation.force('charge').strength(-settings.repelForce * v);
+    simulation.force('link').distance(settings.linkDist * v);
+    simulation.force('collision').radius(d => (getNodeRadius(d) + 2) * v);
+    simulation.alpha(0.5).restart();
+  });
   bind('center-force', 'center-val', 'centerForce', v => { simulation.force('center').strength(v); simulation.alpha(0.3).restart(); });
   bind('repel-force', 'repel-val', 'repelForce', v => { simulation.force('charge').strength(-v); simulation.alpha(0.3).restart(); });
   bind('link-force', 'linkf-val', 'linkForce', v => { simulation.force('link').strength(v); simulation.alpha(0.3).restart(); });
