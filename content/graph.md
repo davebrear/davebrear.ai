@@ -136,6 +136,7 @@ ShowBreadCrumbs: true
     <h4 id="toggle-btn">Controls ▼</h4>
     <div class="control-section">
       <h4>Filters</h4>
+      <input type="text" id="search-input" placeholder="Search by filename..." style="width:100%;padding:5px 8px;background:#1a1a2e;color:#e0e0e0;border:1px solid #555;border-radius:4px;font-size:0.85em;margin:0 0 6px 0;box-sizing:border-box;">
       <div style="display:flex;gap:8px;margin:4px 0 2px 0"><a href="#" id="select-all" style="color:#64ffda;font-size:0.85em">All</a> <a href="#" id="select-none" style="color:#64ffda;font-size:0.85em">None</a></div>
       <div style="display:flex;flex-wrap:wrap;gap:6px;margin:4px 0">
         <label style="display:flex;align-items:center;gap:3px;margin:0"><input type="checkbox" class="type-cb" value="atom" checked> <span class="legend-dot" style="background:#64ffda;width:8px;height:8px"></span> Atoms</label>
@@ -287,6 +288,7 @@ ShowBreadCrumbs: true
     
     const depth = parseInt(document.getElementById('depth-slider').value);
     const activeTypes = new Set([...document.querySelectorAll('.type-cb:checked')].map(cb => cb.value));
+    const searchQuery = document.getElementById('search-input').value.trim().toLowerCase();
     
     let depthMap = null;
     if (centeredNodeId && depth < 5) {
@@ -299,6 +301,7 @@ ShowBreadCrumbs: true
       if (!activeTypes.has(n.type)) return false;
       // When centered, only show nodes that are in the neighbourhood
       if (depthMap && !depthMap.has(n.id)) return false;
+      if (searchQuery && !n.id.toLowerCase().includes(searchQuery)) return false;
       return true;
     }
     
@@ -597,9 +600,33 @@ ShowBreadCrumbs: true
     document.getElementById('depth-slider').value = 5;
     document.getElementById('depth-val').textContent = 'All';
     document.querySelectorAll('.type-cb').forEach(cb => cb.checked = true);
+    document.getElementById('search-input').value = '';
     document.getElementById('note-popup').style.display = 'none';
     draw();
     simulation.alpha(0.1).restart();
+  });
+  
+  // Search: filter on every keystroke; debounce auto-fit so the canvas
+  // settles on matching nodes a moment after the user stops typing.
+  let searchTimeout;
+  document.getElementById('search-input').addEventListener('input', function() {
+    const q = this.value.trim().toLowerCase();
+    draw();
+    clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+      if (!q) { fitToView(); return; }
+      const matching = nodes.filter(n => n.id.toLowerCase().includes(q) && Number.isFinite(n.x) && Number.isFinite(n.y));
+      if (matching.length === 0) return;
+      let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+      matching.forEach(n => { minX = Math.min(minX, n.x); maxX = Math.max(maxX, n.x); minY = Math.min(minY, n.y); maxY = Math.max(maxY, n.y); });
+      const pad = 80;
+      const dx = maxX - minX + pad * 2, dy = maxY - minY + pad * 2;
+      const scale = Math.min(width / dx, height / dy, 3);
+      const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+      transform = d3.zoomIdentity.translate(width / 2 - cx * scale, height / 2 - cy * scale).scale(scale);
+      d3.select(canvas).call(d3.zoom().transform, transform);
+      draw();
+    }, 300);
   });
   
   // Resize
