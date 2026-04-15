@@ -180,7 +180,7 @@ ShowBreadCrumbs: true
 <script src="https://unpkg.com/d3@7/dist/d3.min.js"></script>
 <script>
 (async function() {
-  const res = await fetch('/graph.json');
+  const res = await fetch('/graph.json?v=' + Date.now());
   const data = await res.json();
   
   const typeColors = { atom: '#64ffda', article: '#ff6b6b', moc: '#ffd93d', source: '#6bcb77', system: '#9b59b6' };
