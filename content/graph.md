@@ -233,6 +233,24 @@ ShowBreadCrumbs: true
     .alphaDecay(0.01)
     .on('tick', draw);
   
+  function fitToView() {
+    const drawable = nodes.filter(n => Number.isFinite(n.x) && Number.isFinite(n.y));
+    if (drawable.length === 0) return;
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    drawable.forEach(n => { minX = Math.min(minX, n.x); maxX = Math.max(maxX, n.x); minY = Math.min(minY, n.y); maxY = Math.max(maxY, n.y); });
+    const pad = 60;
+    const dx = maxX - minX + pad * 2, dy = maxY - minY + pad * 2;
+    const scale = Math.min(width / dx, height / dy, 2);
+    const cx = (minX + maxX) / 2, cy = (minY + maxY) / 2;
+    transform = d3.zoomIdentity.translate(width / 2 - cx * scale, height / 2 - cy * scale).scale(scale);
+    d3.select(canvas).call(d3.zoom().transform, transform);
+    draw();
+  }
+  
+  // Auto-fit after the initial simulation settles so any node placed far from
+  // the origin by the force layout gets pulled into view on page load.
+  setTimeout(fitToView, 2500);
+  
   function getNodeRadius(n) {
     return settings.nodeSize * (1 + Math.min((n.degree || 0) * 0.15, 1.5));
   }
