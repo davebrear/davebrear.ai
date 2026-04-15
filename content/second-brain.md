@@ -52,12 +52,14 @@ This is an evolving vault. I'll update it with new atomic notes and articles as 
 
 ## Where my head is right now
 
+**The thesis has a name now.** What I've been calling the chain of cognition idea is now Augmented Cognition (the category) and Chain of Cognition (the method within it). The named enemy is Reheated Thinking - the loop that produces meaning-shaped slop. [The first article](/posts/cook-dont-reheat/) articulating the thesis is live, with a piece a week from here.
+
+**The freezer and the sous-chef.** The same AI plays two different roles depending on the posture I take toward it. As a freezer of pre-cooked positions, it produces Reheated Thinking. As a sous-chef working under my direction, it produces Chain of Cognition. The role is mine to assign. The microwave didn't change. The cook did. This is the strategic answer to "but doesn't your method also use AI?" and the difference between a category and a technique.
+
 **AI-generated knowledge vs AI-augmented thinking.** Karpathy's LLM wiki produces 400,000 words of reference material without writing a word. My vault produces positions I can defend in conversation. Both valid, fundamentally different outcomes. I'm not sure the industry is making this distinction clearly enough yet.
 
 **Subscribable brains as federated collaboration.** Shared vaults flatten two perspectives into one. Subscribable brains keep them discrete. My vault stays mine, yours stays yours, an AI traverses across both. I tested this by subscribing to [Brian Madden's MCP](https://brianmadden.ai) alongside my own vault. Two brains, one session, perspectives intact.
 
 **AI-powered knowledge work is silently gaining traction.** November 2025: models jumped in capability and writable memory turned chatbots into collaborators. A small group of pioneers independently arrived at the same patterns in Q1 2026. The adopters are still tiny but disproportionately influential. When colleagues start asking "how did you produce that?" the tipping point isn't far behind.
 
-**The practice gap, not the technology gap.** Even if AI capabilities froze today, there's a decade of work to fully exploit what's already here. Most people are using AI as a search replacement while a handful have figured out persistent collaboration. The sceptics keep asking "is the next model better enough?" Wrong question.
-
-*Updated April 2026*
+*Updated April 2026 (mid-month)*
