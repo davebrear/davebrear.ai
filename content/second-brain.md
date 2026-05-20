@@ -44,7 +44,7 @@ The [getting-started guide](https://github.com/davebrear/davebrear-ai/blob/main/
 
 ## What's inside
 
-94 atomic notes, 10 maps of content, 11 published articles, 13 source references, and 1 podcast transcript. All cross-linked. The same method I write about is the method that built the vault. [Explore the knowledge graph](/graph/) to see how everything connects.
+94 atomic notes, 10 maps of content, 12 published articles, 13 source references, and 2 podcast transcripts. All cross-linked. The same method I write about is the method that built the vault. [Explore the knowledge graph](/graph/) to see how everything connects.
 
 A **map of content** (MOC) is a bridging note. When I notice a cluster of atoms on a topic, I create a MOC that organises them into a chain of cognition: this idea leads to that one, which connects to a third. Every article in the vault has one. The MOC is the spine that turns scattered atoms into an argument - the writing becomes assembly, not invention.
 
