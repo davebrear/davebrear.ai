@@ -38,7 +38,7 @@ copyright = '© Dave Brear 2026'
       unsafe = true
 
 [outputs]
-  home = ['html', 'rss']
+  home = ['html', 'rss', 'json']
 
 [[menus.main]]
   name = 'Posts'
